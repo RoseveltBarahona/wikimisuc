@@ -1,0 +1,76 @@
+.slideshow,
+.slideshow:after {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 0;
+}
+
+.slideshow:after {
+    content: '';
+    background: transparent url(../images/pattern.png) repeat top left;
+}
+
+.slideshow li span {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: transparent;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 0;
+    -webkit-backface-visibility: hidden;
+    animation: imageAnimation 18s linear infinite 0s;
+    -webkit-animation: imageAnimation 18s linear infinite 0s;
+}
+
+.slideshow li:nth-child(1) span {
+    background-image: url(../images/01-min.jpg);
+}
+
+.slideshow li:nth-child(2) span {
+    background-image: url(../images/02-min.jpg);
+    animation-delay: 6s;
+    -webkit-animation-delay: 6s;
+}
+
+.slideshow li:nth-child(3) span {
+    background-image: url(../images/03-min.jpg);
+    animation-delay: 12s;
+    -webkit-animation-delay: 12s;
+}
+
+
+/* Animation for the slideshow images */
+
+@keyframes imageAnimation {
+    0% {
+        opacity: 0;
+        animation-timing-function: ease-in;
+    }
+    17% {
+        opacity: 1;
+        animation-timing-function: ease-out;
+    }
+    32% {
+        opacity: 1
+    }
+    51% {
+        opacity: 0
+    }
+    100% {
+        opacity: 0
+    }
+}/*
+As a couple other have mentioned …
+If you reduce the slide count to 3-4 for example you get 6 second periods of black between slides. If you expand the slide count to a larger number than 6 (esp 15-20) you get overlapping images sometimes both visible at the same time seen easily at the start of the slideshow after a full cycle.
+Curious is anyone or the codes author has a thought on this? A shame, because like most items on codrops it’s a great piece of code for those of us getting out hands on CSS3! Thank you.
+
+Solved my own observation, thought I would share for any others making the mistake!! In short, since the example has 6 images set on 6 second delays, it’s easy to confuse the numbers when calculating the keyframe percentages. Be sure to use the individual time interval divided by the total time interval then continue the splitting, etc. as instructed. In this way the percentages for keyframe change %’s will vary depending on your slide count (as the other way it does not) & the overlapping transition effects work perfectly whether you have 3 slides or 30!
+*/

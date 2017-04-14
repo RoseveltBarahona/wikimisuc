@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wikimusic</title>
+    <script src='js/ytembed.js'></script>
+    <link rel="stylesheet" href="css/wikimusic.css">
+</head>
+<style>
+/*ul.ytlist table img {
+    display: none;
+}*/
+
+#top-country {
+    display: none;
+}
+
+/** {
+    transition: all 0.5s ease;
+}*/
+</style>
+
+<body>
+    <div class="container">
+        <div id="info-error" style="display: none;">ERROOORRRRR!!!!!!!!!!!!!!</div>
+        <header class="wrapper-search">
+            <ul class="slideshow">
+                <li><span></span></li>
+                <li><span></span></li>
+                <li><span></span></li>
+            </ul>
+            <div class="logo">logo fm</div>
+            <div class="background-search">
+                <h1>wikimusic</h1>
+                <p>Información sobre tus bandas favoritas, top tracks, top albums y recomendaciones basadas en tus gustos musicales</p>
+                Artista:
+                <input class="nombre-artista" type="text" id="nombre-artista" />
+                <button type="submit" id="search" value="">buscar</button>
+            </div>
+        </header>
+        <section id="top-country"></section>
+        <main id="main" class="main">
+            <div class="vertical-bar">aa</div>
+            <div id="image-artist" class="image"></div>
+            <div class="wrapper-info">
+                <section id="info"></section>
+                <section id="wrapper-music-video" class="tracks-and-video">
+                    <div id="music-video"></div>
+                </section>
+                <section id="top-albums" class="top-albums"></section>
+                <section id="similar-artists" class="similar-artists"></section>
+            </div>
+        </main>
+    </div>
+    <div id="album-detail" style="background-color: gold;"> </div>
+    <script type="text/javascript" src="js/wikimusic.js"></script>
+</body>
+
+</html>

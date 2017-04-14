@@ -1,0 +1,160 @@
+@import "reset.less";
+@import "background-images.less"; 
+
+.container {
+    width: 1400px;
+    margin: 0 auto;
+    //height:100vh;
+    //display: table; 
+}
+
+.wrapper-search {
+    width: 100%;
+    max-height: 900px;
+    overflow: hidden;
+    position: relative;
+    background-color: #6e2248;
+
+}
+
+.logo {
+    display: inline-block;
+    width: 10%;
+    height: 100vh;
+    margin-right: -5px;
+    vertical-align: top;
+    background-color: #ddd;
+    background-color: rgba(0, 0, 0, 0.19);
+    position: relative;
+}
+
+.background-search {
+    width: 90%;
+    display: inline-block;
+    height: 100vh;
+    background-color: transparent;
+    z-index:1;
+    position: relative;
+
+}
+
+.main {
+    display: flex;
+    .vertical-bar {
+        background-color: red;
+        display: inline-block;
+        width: 10%;
+    }
+    .image {
+        width: 28%;
+        background-color: green;
+        display: inline-block;
+    }
+    .wrapper-info {
+        background-color: gold;
+        display: inline-block;
+        width: 62%;
+    }
+}
+.tracks-and-video{
+    display:flex;
+    #tracks{
+        background-color:red;
+        flex:1;
+        width: 50%;
+    }
+    #music-video{
+        //background-color:black;
+        width: 50%;
+        flex:1;
+    }
+}
+
+.top-albums{
+   
+   .all-albums{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+   }
+
+    .album{
+        display:inline-block;
+        width: 28%;
+
+        img{
+            width: 100%;
+        }
+    }
+}
+.similar-artists{
+   
+   .all-similars{
+        display: flex;
+        flex-wrap: wrap;
+        //justify-content: space-between;
+   }
+
+    .similar{
+        display:inline-block;
+        width: 28%;
+        margin-right: 8%;
+
+        img{
+            width: 100%;
+        }
+
+        &:nth-of-type(3n){
+            margin-right: 0;
+        }
+    }
+}
+
+
+
+
+
+.ytPlayer {
+   position: fixed;
+   z-index: 500;
+   width: 60%;
+   height: 60%;
+   top: 10%;
+   left: 20%;
+   background-color: #657879;
+}
+
+iframe {
+   position: relative;
+   top: 12%;
+   left: ~'calc(50% - 400px)';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
