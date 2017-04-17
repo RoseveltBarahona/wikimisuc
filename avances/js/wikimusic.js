@@ -12,10 +12,12 @@ var historyArtist = [];
 var historyCounter = 0;
 var videoSearch = true;
 var indexOfArtist;
+var infoError = document.querySelector('.info-error');
+var loading = document.querySelector('.background-loading');
 
 
 // Funcion inicial para conseguir la zona, pais, ...
-(function() {
+/*(function() {
     var ajax = new XMLHttpRequest();
     var url = 'http://ip-api.com/json';
     //mostrar cargando....
@@ -34,7 +36,7 @@ var indexOfArtist;
 // Enviar petición para traer top artistas top segun pais, 
 function showTopArtists(country) {
     ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=geo.gettopartists&country=' + country + '&limit=10&api_key=', renderTopArtist);
-}
+}*/
 
 // Empezar busqueda con el boton buscar o pulsando enter en el campo de texto
 btnSearch.addEventListener('click', function() {
@@ -46,6 +48,7 @@ btnSearch.addEventListener('click', function() {
         historyArtist = [];
         historyCounter = 0;
         showData(value);
+
     }
 });
 
@@ -71,10 +74,11 @@ function showData(name) {
     cleanInfo();
     //get video plugin --> busca un video basado en el nombre del artista
 
+
     document.getElementById("top-country").style.display = 'none';
     ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + name + '&api_key=', renderInfo, name);
     ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=' + name + '&limit=10&api_key=', renderTracks, name);
-    ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=' + name + '&limit=6&api_key=', renderAlbums, name);
+    ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=' + name + '&limit=3&api_key=', renderAlbums, name);
 
     function delegateSimilars() {
         // Delegación de eventos
@@ -88,15 +92,18 @@ function showData(name) {
                 // history conunter solo se modifica desde la función delegate
                 historyCounter++;
                 // crear boton back html
+                //backButton.style.display = 'block';
+                document.querySelector('.wrapper-info').style.marginTop = '30px';
                 createButton();
             }
         });
         // Crear boton volver
         function createButton() {
             var backButton = document.createElement('button');
-            backButton.textContent = "volver";
+            backButton.textContent = "<< volver";
             backButton.setAttribute('id', 'back');
-            backButton.style.display = 'block';
+            backButton.setAttribute('class', 'back btn');
+            //backButton.style.display = 'block';
             var fatherToInsert = document.getElementById('main');
             var childReference = document.getElementById('image-artist'); //document.querySelector('#prueba .clase').title // Azul
             fatherToInsert.insertBefore(backButton, childReference);
@@ -109,6 +116,7 @@ function showData(name) {
                 // y vuelvo a crear el boton y vuelve a estar disponible para retrocedes un paso mas en el historico de pasos
                 createButton();
                 // si estoy en el historial numero "0" escondo el boron volver.
+                document.querySelector('.wrapper-info').style.marginTop = '30px';
                 //alert (historyCounter);
                 if (historyCounter === 0) {
                     document.getElementById('back').style.display = 'none';
@@ -117,6 +125,8 @@ function showData(name) {
                     // guardo el primer artista buscado y lo pongo como inicio del index "historyArtist"
                     indexOfArtist = document.getElementById('nombre-artista').value;
                     historyArtist.push(indexOfArtist);
+
+                    document.querySelector('.wrapper-info').style.marginTop = '0px';
                 }
             });
         }
@@ -126,7 +136,8 @@ function showData(name) {
         var albums = document.getElementById('top-albums');
         albums.addEventListener('click', function(event) {
             var elemento = event.target;
-            if (elemento.tagName.toLowerCase() === 'img') {
+            if (elemento.tagName.toLowerCase() === 'a') {
+                event.preventDefault();
                 var AlbumName = elemento.id;
                 ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=' + name + '&album=' + AlbumName + '&api_key=', renderAlbumDetails);
                 //y ponerlos en un div
@@ -134,14 +145,25 @@ function showData(name) {
             }
         });
     }
+
+    function delegateVideo() {
+        var a = document.getElementById('music-video');
+        a.addEventListener('click', function(event) {
+            var elemento = event.target;
+            if (elemento.tagName.toLowerCase() === 'ul') {
+                alert("hola");
+            }
+        });
+    }
     delegateSimilars();
+    delegateVideo();
     delegateAlbums();
 }
 
 function ajaxGetInfo(metodo, funcion, name) {
     //na
     var ajax = new XMLHttpRequest();
-    //mostrar cargando...
+    loading.style.display = 'block';
     artistName.disabled = true;
     btnSearch.disabled = true;
     btnSearch.textContent = 'BUSCANDO.........';
@@ -152,43 +174,50 @@ function ajaxGetInfo(metodo, funcion, name) {
 
             if (datos.error >= 0) { //ERROR JSON
                 //noEncontrado(datos.message);
+                console.log(datos);
                 document.getElementById('wrapper-music-video').style.display = 'none';
-                document.getElementById('info-error').style.display = 'block';
+                infoError.style.display = 'block';
             } else {
                 for (var i in datos) {
                     funcion(datos[i]); //mandar datos a las funciones para renderizar
                     //buscar video
-                    if (videoSearch) {
-                        console.log(datos);
-                        ytEmbed.init({
-                            'block': 'music-video',
-                            //'key': 'your-youtube-developer-key',
-                            'key': 'AIzaSyA8OmKcw2DMNkJicyCJ0vqvf90xgeH52zE',
-                            //'q': name + ' ' + 'band',
-                            'q': name,
-                            'type': 'search',
-                            'results': 1,
-                            //'meta': true,
-                            //'display_first': true,
-                            'player': 'embed',
-
-                            'thumbnails': true,
-                            'layout': 'full',
-                            //
-                            //'playlist':true,
-                            'width': '800',
-                            'height': '488'
-
-                        });
-                        videoSearch = false;
-                    }
+                    console.log(datos);
                 }
+                infoError.style.display = 'none';
+                if (videoSearch) {
+
+                    ytEmbed.init({
+                        'block': 'music-video',
+                        //'key': 'your-youtube-developer-key',
+                        'key': 'AIzaSyA8OmKcw2DMNkJicyCJ0vqvf90xgeH52zE', //AIzaSyCCxfoBKXBxrVe4axTZ6tiPukVQ5EC7j80
+                        //'q': name + ' ' + 'band',
+                        'q': name,
+                        'type': 'search',
+                        'results': 1,
+                        //'meta': true,
+                        //'display_first': true,
+                        'player': 'embed',
+
+                        'thumbnails': true,
+                        'layout': 'full',
+                        //
+                        //'playlist':true,
+                        'width': '800',
+                        'height': '488'
+
+                    });
+                    videoSearch = false;
+                }
+                window.scrollTo(0, 800);
             }
             //extras
             btnSearch.disabled = false;
             artistName.disabled = false;
             btnSearch.textContent = 'buscar';
-            //ocultar cargando....
+            setTimeout(function() {
+                loading.style.display = 'none';
+            }, 1000);
+            
 
         } else if (ajax.readyState === 4 && ajax.status === 404) { //ERROR 404
             var errorInfo = JSON.parse(ajax.responseText);
@@ -205,8 +234,8 @@ function cleanInfo() {
     var contenido = '<div class="vertical-bar">aa</div>';
     contenido += ' <div id="image-artist" class="image"></div>';
     contenido += '<div class="wrapper-info">';
-    contenido += '<section id="info"></section>';
-    contenido += '<section id="wrapper-music-video" class="tracks-and-video"><div id="tracks"></div><div id="music-video"></div></section>';
+    contenido += '<section id="info" class="info"></section>';
+    contenido += '<section id="wrapper-music-video" class="tracks-and-video"><div id="tracks"></div><div id="music-video"></div> </section>';
     contenido += '<section id="top-albums" class="top-albums"></section>';
     contenido += '<section id="similar-artists" class="similar-artists"></section>';
     contenido += '</div>';
@@ -228,22 +257,22 @@ function renderTopArtist(topCountry) {
 function renderInfo(datos) {
 
     var imageArtist = '';
-    imageArtist += '<div class ="image-artist"><img class="" src="' + datos.image[3]['#text'] + '" /><p><a href="' + datos.url + '" target="_blank">' + datos.url + '</a></p></div>';
+    imageArtist += '<div class ="image-artist"><img class="" src="' + datos.image[3]['#text'] + '" /><a href="' + datos.url + '" target="_blank"> Ver en last fm</a><h4>' + datos.name + '</h4></div>';
     document.getElementById('image-artist').innerHTML += imageArtist;
 
     // info principal
     var contenido = '<div class="bio">';
-    contenido += '<p><strong>' + datos.name + '</strong></p>';
-    contenido += '<div>';
+    contenido += '<h3>' + datos.name + '</h3>';
+    contenido += '<div class="stats">';
     // estadisticas
     for (var stats in datos.stats) {
-        contenido += "<p>" + stats + ":" + datos.stats[stats] + "</p>";
+        contenido += "<p>" + stats + ": <span> " + datos.stats[stats] + "</span></p>";
     }
     contenido += '</div><p>' + datos.bio.summary + '</p></div>';
     // tags
     contenido += '<div class="tags">';
     for (var i = 0; i < datos.tags.tag.length; i++) {
-        contenido += "<p>" + datos.tags.tag[i].name + "</p>";
+        contenido += "<span>" + datos.tags.tag[i].name + "</span>";
     }
     contenido += '</div>';
     // pintar elementoss en #info
@@ -253,8 +282,8 @@ function renderInfo(datos) {
     var similars = datos.similar.artist;
     var similarArtists = '<h3>Artistas similares</h3>';
     similarArtists += '<div class="all-similars">';
-    for (var i = 0; i < similars.length; i++) {
-        similarArtists += '<div class="similar"><h2 id="similar-name">' + similars[i].name + '</h2><div><img src=" ' + similars[i].image[3]['#text'] + ' " /></div><a title = "' + similars[i].name + '" href="' + similars[i].url + '" target="_blank">ver en last fm</a></div>';
+    for (var i = 0; i < similars.length - 2; i++) {
+        similarArtists += '<div class="similar"><img src=" ' + similars[i].image[2]['#text'] + ' " /><h2 id="similar-name">' + similars[i].name + '</h2><a class="btn" title = "' + similars[i].name + '" href="' + similars[i].url + '" target="_blank">Descubrir artista</a></div>';
     }
     similarArtists += '</div>';
     // pintar elementos en #similar-artists
@@ -265,9 +294,9 @@ function renderInfo(datos) {
 function renderTracks(tracks) {
 
     var numberTrack = 0;
-    var topTracks = '<div class="top-tracks">';
+    var topTracks = '<div class="top-tracks"><h3>Top Tracks</h3> <h3 class ="title-video">Video</h3>';
     for (var i = 0; i < tracks.track.length; i++) {
-        topTracks += '<p><span>' + (numberTrack += 1) + '</span>' + tracks.track[i].name + '<span>' + tracks.track[i].playcount + '</span></p>';
+        topTracks += '<p><span>' + (numberTrack += 1) + '</span><span>' + tracks.track[i].name + '</span><span>' + tracks.track[i].playcount + '</span></p>';
     }
     topTracks += '</div>';
     // pintar elems en #top-tracks
@@ -276,33 +305,39 @@ function renderTracks(tracks) {
 
 // Mostrar detalle de album ----------------------------------------------------------------------
 function renderAlbumDetails(album) {
-    document.getElementById('album-detail').innerHTML = "";
-    var albumDetail = '';
+    var albumInfo = document.querySelector('.album-detail');
+    albumInfo.innerHTML = "";
+
     var numberTrack = 0;
-    albumDetail += '<div><div><p>' + album.name + '<span>' + album.artist + '</span></p><img src="' + album.image[3]['#text'] + '"/></div>';
+    var albumDetail = '<div class="modal-album-wrapper"><button class="close">x</button><div class="modal-album-image"><p>' + album.name + '<span>' + album.artist + '</span></p><img src="' + album.image[2]['#text'] + '"/></div>';
     // albumDetail += '<img src="' + album.image[3]['#text'] + '"/>';
-    albumDetail += '<div>';
+    albumDetail += '<div class="modal-tracks-album">';
     for (var i = 0; i < album.tracks.track.length; i++) {
         albumDetail += '<p><span>' + (numberTrack += 1) + '</span>' + album.tracks.track[i].name + '<span>' + album.tracks.track[i].duration + '</span></p>';
     }
     albumDetail += '</div></div>';
 
     // pintar elems en #top-tracks
-    document.getElementById('album-detail').innerHTML += albumDetail;
+
+    albumInfo.innerHTML += albumDetail;
+    albumInfo.style.display = 'block';
+    document.querySelector('.close').addEventListener('click', function() {
+        albumInfo.style.display = 'none';
+    });
 }
 
 // Mostrar top albums  ----------------------------------------------------------------------
 function renderAlbums(albums) {
     //console.log(tracks.track)
     var topAlbums = '';
-    var numberTrack = 0;
-    topAlbums += '<h3>Musica</h3><span>top canciones</span>';
+    topAlbums += '<h3>Top Albums</h3>';
     topAlbums += '<div class="all-albums">';
     for (var i = 0; i < albums.album.length; i++) {
         topAlbums += '<div class="album">';
-        topAlbums += '<p><span>' + (numberTrack += 1) + '</span>' + albums.album[i].name + '<span>' + albums.album[i].playcount + '</span></p>';
-        topAlbums += '<p><a href="' + albums.album[i].url + '" target="_blank">' + 'ver album' + '</a></p>';
-        topAlbums += '<img id="' + albums.album[i].name + '"src="' + albums.album[i].image[3]['#text'] + '"></p>';
+        topAlbums += '<img id="' + albums.album[i].name + '"src="' + albums.album[i].image[2]['#text'] + '"/>';
+
+        topAlbums += '<p class ="album-name"><span>' + albums.album[i].name + '</span><span>' + albums.album[i].playcount + ' reproducciones</span></p>';
+        topAlbums += '<a id="' + albums.album[i].name + '" class="btn" href="' + albums.album[i].url + '" target="_blank">' + 'ver album' + '</a>';
         topAlbums += '</div>';
     }
     topAlbums += '</div>';
