@@ -177,11 +177,11 @@ table {
     animation-timing-function: ease-in;
   }
   17% {
-    opacity: 1;
+    opacity: .5;
     animation-timing-function: ease-out;
   }
   32% {
-    opacity: 1;
+    opacity: .5;
   }
   51% {
     opacity: 0;
@@ -239,9 +239,21 @@ body,
   font-family: 'Fira Sans', sans-serif;
   font-size: 16px;
   transition: all 0.2s ease;
+  outline: none;
 }
 html {
-  background-color: rgba(5, 222, 255, 0.08);
+  background-color: rgba(255, 206, 5, 0.05);
+}
+html:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: .15;
+  background: -webkit-linear-gradient(45deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%), -webkit-linear-gradient(-45deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%);
+  background: linear-gradient(45deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%), linear-gradient(135deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%);
+  background-position: -5px 0, 5px 0;
+  background-size: 20px 10px;
 }
 .container {
   width: 1450px;
@@ -251,7 +263,11 @@ html {
   filter: saturate(1.05);
   background-color: #fff;
   font-weight: 300;
-  box-shadow: 0 10px 20px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px 5px rgba(0, 0, 0, 0.05);
+}
+.container.intro {
+  min-width: 1450px;
+  width: 70%;
 }
 .wrapper-search {
   width: 100%;
@@ -271,6 +287,11 @@ html {
   background-color: rgba(0, 0, 0, 0.19);
   position: relative;
 }
+.logo img {
+  width: 100%;
+  height: auto;
+  opacity: .98;
+}
 .background-search {
   width: 92%;
   display: inline-block;
@@ -278,26 +299,57 @@ html {
   z-index: 1;
   position: relative;
   color: #fff;
-  padding: 7% 0 0 4%;
+  padding: 13% 0 0 5%;
 }
 .background-search h1 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 100;
-  font-size: 120px;
+  font-size: 100px;
   letter-spacing: -1px;
   margin: 0 0 10px 0;
 }
 .background-search p {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 300;
   width: 65%;
   margin: 0 0 40px 0;
 }
 .background-search .search-bar {
+  position: relative;
   display: inline-flex;
   height: 65px;
   font-family: 'Fira Sans', sans-serif;
   box-shadow: 0 20px 50px 5px rgba(0, 0, 0, 0.4);
+}
+.background-search .search-bar .info-error {
+  background-color: #d61616;
+  padding: 18px 25px;
+  right: -300px;
+  top: 5px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.4s ease;
+  position: absolute;
+  border-radius: 6px;
+  z-index: 1;
+  transform: scale(1.3, 1.3);
+}
+.background-search .search-bar .info-error:before {
+  content: " ";
+  width: 0px;
+  left: -14px;
+  top: 22px;
+  height: 0px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 14px solid #d61616;
+  position: absolute;
+}
+.background-search .search-bar .info-error.show {
+  opacity: 1;
+  transform: scale(1, 1);
 }
 .background-search input {
   border: solid 6px #00b8d4;
@@ -320,8 +372,8 @@ html {
   border-radius: 0 8px 8px 0;
   color: #fff;
   margin: 0;
-  letter-spacing: 1px;
-  width: 150px;
+  letter-spacing: 2px;
+  padding: 10px 50px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -345,7 +397,7 @@ html {
   background-color: #fff8f0;
   width: 26%;
   display: inline-block;
-  padding: 55px 0 0 35px;
+  padding: 65px 0 0 35px;
 }
 .main .image img {
   width: 92%;
@@ -379,7 +431,7 @@ html {
 .main .wrapper-info {
   display: inline-block;
   width: 66%;
-  padding: 55px 50px 100px 50px;
+  padding: 65px 50px 100px 50px;
 }
 .main h3 {
   font-family: 'Montserrat', sans-serif;
@@ -515,12 +567,13 @@ html {
 }
 .tracks-and-video .ytPlayer {
   position: fixed;
-  z-index: 500;
-  width: 60%;
-  height: 60%;
-  top: 10%;
-  left: 20%;
-  background-color: #657879;
+  z-index: 5;
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+  background-color: #fff;
+  box-shadow: 0px 0px 87px 0px rgba(0, 0, 0, 0.3);
 }
 .tracks-and-video .ytPlayer button,
 .tracks-and-video .ytPlayer close-video {
@@ -530,8 +583,10 @@ html {
 }
 .tracks-and-video iframe {
   position: relative;
-  top: 12%;
-  left: calc(50% - 400px);
+  top: 50%;
+  left: 50%;
+  /* left: calc(50% - 400px); */
+  transform: translateY(-50%) translateX(-50%);
 }
 .top-albums {
   margin-bottom: 40px;
@@ -594,50 +649,27 @@ html {
 .similar-artists .similar:nth-of-type(3n) {
   margin-right: 0;
 }
-.info-error {
-  background-color: red;
-  padding: 18px 25px;
-  left: 640px;
-  top: 382px;
-  width: 20%;
-  text-align: center;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 500;
-  opacity: 0;
-  margin-top: 0px;
-  transition: all 0.4s ease;
-  position: absolute;
-  border-radius: 6px;
-  z-index: 1;
-  transition: all 0.6s ease;
-  transform: scale(1.5, 1.5);
-}
-.info-error:before {
-  content: " ";
-  width: 0px;
-  left: -14px;
-  top: 22px;
-  height: 0px;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 14px solid red;
-  position: absolute;
-}
-.info-error.show {
-  opacity: 1;
-  margin-top: 0;
-  transform: scale(1, 1);
+.footer {
+  padding: 30px 120px;
+  color: #888;
+  font-size: 14px;
 }
 .album-detail {
-  background-color: rgba(34, 34, 34, 0.31);
+  background-color: #fff;
   position: fixed;
   z-index: 1;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
   visibility: hidden;
   opacity: 0;
+  box-shadow: 0px 0px 87px 0px rgba(0, 0, 0, 0.3);
+}
+.album-detail .close {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 .album-detail.show {
   visibility: visible;
@@ -648,14 +680,10 @@ html {
   position: absolute;
   background-color: #a27979;
   display: flex;
-  left: 34%;
-  top: 30%;
+  left: 50%;
+  top: 50%;
   padding: 50px;
-}
-.modal-album-wrapper .close {
-  position: absolute;
-  right: 0;
-  top: 0;
+  transform: translateY(-50%) translateX(-50%);
 }
 /* SCROLL TO TOP ***************************/
 .back-to-top {
@@ -700,6 +728,7 @@ html {
   position: absolute;
   left: 50%;
   top: 50%;
+  opacity: .8;
 }
 @keyframes spin {
   0% {

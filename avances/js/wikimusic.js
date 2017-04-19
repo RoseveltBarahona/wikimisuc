@@ -1,6 +1,3 @@
-/*FALTA CAPTURAR ARTISTA DESCONOCIDO , OTROS ERRORES DE AJAX Y EL LOADING
-    cuando ejecuto la llamada cargando: display : block
-   cunado es exitosa cargando display: none;*/
 //(function() {
 // variables globales
 var apiKey = "e46d175d00ea667bd3d0d7d025ab81df";
@@ -8,6 +5,7 @@ var methodInfo = 'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artis
 var artistName = document.getElementById('nombre-artista');
 var btnSearch = document.getElementById('search');
 var mainInfo = document.getElementById('main');
+var container = document.querySelector('.container');
 // recordar recorrido de artistas(clicks)
 var historyArtist = [];
 var historyCounter = 0;
@@ -51,9 +49,6 @@ function showData(name) {
     historyArtist.push(name);
     // limpiar html
     cleanInfo();
-    //get video plugin --> busca un video basado en el nombre del artista
-
-
     document.getElementById("top-country").style.display = 'none';
     ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + name + '&api_key=', renderInfo, name);
     ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=' + name + '&limit=10&api_key=', renderTracks, name);
@@ -71,7 +66,6 @@ function showData(name) {
                 // history conunter solo se modifica desde la función delegate
                 historyCounter++;
                 // crear boton back html
-                //backButton.style.display = 'block';
                 document.querySelector('.wrapper-info').style.marginTop = '30px';
                 createButton();
             }
@@ -119,8 +113,6 @@ function showData(name) {
                 event.preventDefault();
                 var AlbumName = elemento.id;
                 ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=' + name + '&album=' + AlbumName + '&api_key=', renderAlbumDetails);
-                //y ponerlos en un div
-                //cuando hago click display block al div que los esta cargando
             }
         });
     }
@@ -152,47 +144,38 @@ function ajaxGetInfo(metodo, funcion, name) {
             var datos = JSON.parse(ajax.responseText);
 
             if (datos.error >= 0) { //ERROR JSON
-                //noEncontrado(datos.message);
                 console.log(datos);
                 document.getElementById('wrapper-music-video').style.display = 'none';
+                mainInfo.classList.add('hidden');
                 infoError.classList.add('show');
             } else {
                 for (var i in datos) {
                     funcion(datos[i]); //mandar datos a las funciones para renderizar
-                    //buscar video
                     console.log(datos);
                 }
                 if (videoSearch) {
-
+                    //get video plugin --> busca un video basado en el nombre del artista
                     ytEmbed.init({
                         'block': 'music-video',
-                        //'key': 'your-youtube-developer-key',
                         'key': 'AIzaSyA8OmKcw2DMNkJicyCJ0vqvf90xgeH52zE', //AIzaSyCCxfoBKXBxrVe4axTZ6tiPukVQ5EC7j80
-                        //'q': name + ' ' + 'band',
                         'q': name,
                         'type': 'search',
                         'results': 1,
-                        //'meta': true,
-                        //'display_first': true,
                         'player': 'embed',
-
                         'thumbnails': true,
                         'layout': 'full',
-                        //
-                        //'playlist':true,
                         'width': '800',
                         'height': '488'
-
                     });
                     videoSearch = false;
                 }
                 if (funcion !== renderAlbumDetails) {
-                    window.scrollTo(0, 800);
+                    window.scrollTo(0, 920);
                 }
+                container.classList.remove('intro');
                 mainInfo.classList.remove('hidden');
             }
             //extras
-
             btnSearch.disabled = false;
             artistName.disabled = false;
             btnSearch.textContent = 'buscar';
@@ -204,7 +187,7 @@ function ajaxGetInfo(metodo, funcion, name) {
         } else if (ajax.readyState === 4 && ajax.status === 404) { //ERROR 404
             var errorInfo = JSON.parse(ajax.responseText);
             console.error("ERROR! 404");
-            console.info(errorInfo);
+            alert("error, recurso no encontrado ");
         }
     };
     ajax.open("GET", metodo + apiKey + "&format=json", true);
@@ -213,7 +196,7 @@ function ajaxGetInfo(metodo, funcion, name) {
 
 // Vaciar el contenido de los divs antes de traer los nuevos datos
 function cleanInfo() {
-    var contenido = '<div class="vertical-bar">aa</div>';
+    var contenido = '<div class="vertical-bar"></div>';
     contenido += ' <div id="image-artist" class="image"></div>';
     contenido += '<div class="wrapper-info">';
     contenido += '<section id="info" class="info"></section>';
@@ -223,12 +206,11 @@ function cleanInfo() {
     contenido += '</div>';
     infoError.classList.remove('show');
 
-
     document.getElementById('main').innerHTML = contenido;
 }
 
 
-// Mostrar información general de artista ----------------------------------------------------------------------
+// Mostrar información general de artista --------------
 function renderInfo(datos) {
 
     var imageArtist = '';
@@ -265,7 +247,7 @@ function renderInfo(datos) {
     document.getElementById('similar-artists').innerHTML += similarArtists;
 }
 
-// Mostrar top canciones ----------------------------------------------------------------------
+// Mostrar top canciones ----------------
 function renderTracks(tracks) {
 
     var numberTrack = 0;
@@ -278,13 +260,13 @@ function renderTracks(tracks) {
     document.getElementById('tracks').innerHTML += topTracks;
 }
 
-// Mostrar detalle de album ----------------------------------------------------------------------
+// Mostrar detalle de album ---------------
 function renderAlbumDetails(album) {
     var albumInfo = document.querySelector('.album-detail');
     albumInfo.innerHTML = "";
 
     var numberTrack = 0;
-    var albumDetail = '<div class="modal-album-wrapper"><button class="close">x</button><div class="modal-album-image"><p>' + album.name + '<span>' + album.artist + '</span></p><img src="' + album.image[2]['#text'] + '"/></div>';
+    var albumDetail = '<button class="close">x</button><div class="modal-album-wrapper"><div class="modal-album-image"><p>' + album.name + '<span>' + album.artist + '</span></p><img src="' + album.image[2]['#text'] + '"/></div>';
     // albumDetail += '<img src="' + album.image[3]['#text'] + '"/>';
     albumDetail += '<div class="modal-tracks-album">';
     for (var i = 0; i < album.tracks.track.length; i++) {
@@ -293,7 +275,6 @@ function renderAlbumDetails(album) {
     albumDetail += '</div></div>';
 
     // pintar elems en #top-tracks
-
     albumInfo.innerHTML += albumDetail;
     albumInfo.classList.add('show');
     document.querySelector('.close').addEventListener('click', function() {
@@ -301,9 +282,8 @@ function renderAlbumDetails(album) {
     });
 }
 
-// Mostrar top albums  ----------------------------------------------------------------------
+// Mostrar top albums  -------------------
 function renderAlbums(albums) {
-    //console.log(tracks.track)
     var topAlbums = '';
     topAlbums += '<h3>Top Albums</h3>';
     topAlbums += '<div class="all-albums">';
