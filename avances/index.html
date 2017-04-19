@@ -18,11 +18,12 @@
 
 <body>
     <div class="container">
-        <div class="info-error" style="display: none;"><span>Artistas no encontrado</span></div>
+        
         <div class="background-loading">
             <div class="loading"></div>
         </div>
         <header class="wrapper-search">
+        <div class="info-error"><span>Artistas no encontrado</span></div>
             <ul class="slideshow">
                 <li><span></span></li>
                 <li><span></span></li>
@@ -39,8 +40,8 @@
             </div>
         </header>
         <section id="top-country"></section>
-        <main id="main" class="main">
-            <div class="vertical-bar">aa</div>
+        <main id="main" class="main hidden">
+            <div class="vertical-bar"></div>
             <div id="image-artist" class="image"></div>
             <div class="wrapper-info">
                 <section id="info" class="info"></section>
@@ -51,9 +52,11 @@
                 <section id="similar-artists" class="similar-artists"></section>
             </div>
         </main>
+        <p style="padding: 50px 100px;">Praesent placerat, est euismod faucibus interdum, massa odio pulvinar lorem, varius pellentesque tortor lorem sit amet ipsum. Sed ut lorem nibh. Sed enim risus, dignissim at euismod sed, imperdiet iaculis est. Ut ornare purus vel dolor lacinia bibendum.</p>
     </div>
     <div class="album-detail"></div>
     <a href="#0" class="back-to-top">Top</a>
+
     <script type="text/javascript" src="js/wikimusic.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jq-events.js"></script>

@@ -231,7 +231,7 @@ Solved my own observation, thought I would share for any others making the mista
 }
 /****************************/
 a {
-  color: #00a7c0;
+  color: #00b8d4;
 }
 hmtl,
 body,
@@ -278,7 +278,7 @@ html {
   z-index: 1;
   position: relative;
   color: #fff;
-  padding: 6% 0 0 4%;
+  padding: 7% 0 0 4%;
 }
 .background-search h1 {
   font-family: 'Montserrat', sans-serif;
@@ -300,7 +300,7 @@ html {
   box-shadow: 0 20px 50px 5px rgba(0, 0, 0, 0.4);
 }
 .background-search input {
-  border: solid 6px #00a7c0;
+  border: solid 6px #00b8d4;
   border-radius: 8px 0 0 8px;
   border-right: none;
   width: 280px;
@@ -308,7 +308,7 @@ html {
   margin: 0;
   padding: 5px 5px 5px 20px;
   margin-right: -4px;
-  font-size: 22px;
+  font-size: 24px;
 }
 .background-search input:focus {
   width: 320px;
@@ -316,10 +316,11 @@ html {
 }
 .background-search button {
   background-color: #ef482f;
-  border: solid 6px #00a7c0;
+  border: solid 6px #00b8d4;
   border-radius: 0 8px 8px 0;
   color: #fff;
   margin: 0;
+  letter-spacing: 1px;
   width: 150px;
   font-weight: 700;
   text-transform: uppercase;
@@ -388,6 +389,10 @@ html {
   color: #ef482f;
   font-weight: 600;
   text-transform: uppercase;
+}
+.main.hidden {
+  height: 0;
+  overflow: hidden;
 }
 .info {
   padding: 0 0 0 25px;
@@ -591,7 +596,38 @@ html {
 }
 .info-error {
   background-color: red;
-  padding: 50px;
+  padding: 18px 25px;
+  left: 640px;
+  top: 382px;
+  width: 20%;
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0;
+  margin-top: 0px;
+  transition: all 0.4s ease;
+  position: absolute;
+  border-radius: 6px;
+  z-index: 1;
+  transition: all 0.6s ease;
+  transform: scale(1.5, 1.5);
+}
+.info-error:before {
+  content: " ";
+  width: 0px;
+  left: -14px;
+  top: 22px;
+  height: 0px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 14px solid red;
+  position: absolute;
+}
+.info-error.show {
+  opacity: 1;
+  margin-top: 0;
+  transform: scale(1, 1);
 }
 .album-detail {
   background-color: rgba(34, 34, 34, 0.31);
@@ -600,7 +636,12 @@ html {
   top: 0;
   width: 100%;
   height: 100%;
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+.album-detail.show {
+  visibility: visible;
+  opacity: 1;
 }
 .modal-album-wrapper {
   width: 800px;
@@ -646,7 +687,8 @@ html {
   width: 100%;
   height: 100%;
   background-color: rgba(5, 4, 4, 0.2);
-  display: none;
+  visibility: hidden;
+  opacity: 0;
 }
 .background-loading .loading {
   border: 14px solid #ddd;
@@ -666,4 +708,8 @@ html {
   100% {
     transform: rotate(360deg);
   }
+}
+.background-loading.show {
+  visibility: visible;
+  opacity: 1;
 }

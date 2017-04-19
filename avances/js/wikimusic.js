@@ -7,6 +7,7 @@ var apiKey = "e46d175d00ea667bd3d0d7d025ab81df";
 var methodInfo = 'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=The cure&api_key=';
 var artistName = document.getElementById('nombre-artista');
 var btnSearch = document.getElementById('search');
+var mainInfo = document.getElementById('main');
 // recordar recorrido de artistas(clicks)
 var historyArtist = [];
 var historyCounter = 0;
@@ -15,28 +16,6 @@ var indexOfArtist;
 var infoError = document.querySelector('.info-error');
 var loading = document.querySelector('.background-loading');
 
-
-// Funcion inicial para conseguir la zona, pais, ...
-/*(function() {
-    var ajax = new XMLHttpRequest();
-    var url = 'http://ip-api.com/json';
-    //mostrar cargando....
-    ajax.onreadystatechange = function() {
-        if (ajax.readyState === 4 && ajax.status === 200) {
-            var datos = JSON.parse(ajax.responseText);
-            country = datos.country;
-            showTopArtists(country);
-            //ocultar cargando...
-        }
-    };
-    ajax.open("GET", url, true);
-    ajax.send();
-})();
-
-// Enviar petición para traer top artistas top segun pais, 
-function showTopArtists(country) {
-    ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=geo.gettopartists&country=' + country + '&limit=10&api_key=', renderTopArtist);
-}*/
 
 // Empezar busqueda con el boton buscar o pulsando enter en el campo de texto
 btnSearch.addEventListener('click', function() {
@@ -163,7 +142,7 @@ function showData(name) {
 function ajaxGetInfo(metodo, funcion, name) {
     //na
     var ajax = new XMLHttpRequest();
-    loading.style.display = 'block';
+    loading.classList.add('show');
     artistName.disabled = true;
     btnSearch.disabled = true;
     btnSearch.textContent = 'BUSCANDO.........';
@@ -176,14 +155,13 @@ function ajaxGetInfo(metodo, funcion, name) {
                 //noEncontrado(datos.message);
                 console.log(datos);
                 document.getElementById('wrapper-music-video').style.display = 'none';
-                infoError.style.display = 'block';
+                infoError.classList.add('show');
             } else {
                 for (var i in datos) {
                     funcion(datos[i]); //mandar datos a las funciones para renderizar
                     //buscar video
                     console.log(datos);
                 }
-                infoError.style.display = 'none';
                 if (videoSearch) {
 
                     ytEmbed.init({
@@ -208,16 +186,20 @@ function ajaxGetInfo(metodo, funcion, name) {
                     });
                     videoSearch = false;
                 }
-                window.scrollTo(0, 800);
+                if (funcion !== renderAlbumDetails) {
+                    window.scrollTo(0, 800);
+                }
+                mainInfo.classList.remove('hidden');
             }
             //extras
+
             btnSearch.disabled = false;
             artistName.disabled = false;
             btnSearch.textContent = 'buscar';
             setTimeout(function() {
-                loading.style.display = 'none';
-            }, 1000);
-            
+                loading.classList.remove('show');
+            }, 500);
+
 
         } else if (ajax.readyState === 4 && ajax.status === 404) { //ERROR 404
             var errorInfo = JSON.parse(ajax.responseText);
@@ -239,19 +221,12 @@ function cleanInfo() {
     contenido += '<section id="top-albums" class="top-albums"></section>';
     contenido += '<section id="similar-artists" class="similar-artists"></section>';
     contenido += '</div>';
+    infoError.classList.remove('show');
 
 
     document.getElementById('main').innerHTML = contenido;
 }
 
-// Mostrar artistas top segun zona 
-function renderTopArtist(topCountry) {
-    var tops = '';
-    for (var i = 0; i < topCountry.artist.length; i++) {
-        tops += "<div><p>" + topCountry.artist[i].name + "</p><img src=" + topCountry.artist[i].image[3]["#text"] + "/><p>" + topCountry.artist[i].listeners + "</p><a href =" + topCountry.artist[i].url + " target='blank'>link</a></div>";
-    }
-    document.getElementById('top-country').innerHTML += tops;
-}
 
 // Mostrar información general de artista ----------------------------------------------------------------------
 function renderInfo(datos) {
@@ -320,9 +295,9 @@ function renderAlbumDetails(album) {
     // pintar elems en #top-tracks
 
     albumInfo.innerHTML += albumDetail;
-    albumInfo.style.display = 'block';
+    albumInfo.classList.add('show');
     document.querySelector('.close').addEventListener('click', function() {
-        albumInfo.style.display = 'none';
+        albumInfo.classList.remove('show');
     });
 }
 
