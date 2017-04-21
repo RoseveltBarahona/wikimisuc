@@ -11,6 +11,7 @@
 .slideshow:after {
     content: '';
     background: transparent url(../images/pattern.png) repeat top left;
+    background-size: 3px 3px;
 }
 
 .slideshow li span {
@@ -55,12 +56,12 @@
         animation-timing-function: ease-in;
     }
     17% {
-        opacity: .5;
+        opacity: .6;
         animation-timing-function: ease-out;
         //transform: scale(1.05);
     }
     32% {
-        opacity: .5;
+        opacity: .6;
         //transform: scale(1.1);
     }
     51% {
@@ -70,7 +71,10 @@
     100% {
         opacity: 0;
     }
-}/*
+}
+
+
+/*
 As a couple other have mentioned …
 If you reduce the slide count to 3-4 for example you get 6 second periods of black between slides. If you expand the slide count to a larger number than 6 (esp 15-20) you get overlapping images sometimes both visible at the same time seen easily at the start of the slideshow after a full cycle.
 Curious is anyone or the codes author has a thought on this? A shame, because like most items on codrops it’s a great piece of code for those of us getting out hands on CSS3! Thank you.

@@ -140,6 +140,7 @@ table {
 .slideshow:after {
   content: '';
   background: transparent url(../images/pattern.png) repeat top left;
+  background-size: 3px 3px;
 }
 .slideshow li span {
   width: 100%;
@@ -177,11 +178,11 @@ table {
     animation-timing-function: ease-in;
   }
   17% {
-    opacity: .5;
+    opacity: .6;
     animation-timing-function: ease-out;
   }
   32% {
-    opacity: .5;
+    opacity: .6;
   }
   51% {
     opacity: 0;
@@ -229,6 +230,9 @@ Solved my own observation, thought I would share for any others making the mista
   background-color: #ef482f;
   color: #fff;
 }
+.hide {
+  display: none;
+}
 /****************************/
 a {
   color: #00b8d4;
@@ -243,6 +247,7 @@ body,
 }
 html {
   background-color: rgba(255, 206, 5, 0.05);
+  filter: saturate(1.06);
 }
 html:before {
   content: "";
@@ -254,19 +259,19 @@ html:before {
   background: linear-gradient(45deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%), linear-gradient(135deg, rgba(255, 0, 0, 0) 0, rgba(255, 0, 0, 0) 49%, #ff0000 49%, #ff0000 51%, #ff0000 51%, rgba(255, 0, 0, 0) 51%, rgba(255, 0, 0, 0) 100%);
   background-position: -5px 0, 5px 0;
   background-size: 20px 10px;
+  z-index: -1;
 }
 .container {
-  width: 1450px;
+  width: 1400px;
   margin: 0 auto;
   font-weight: 400;
   line-height: 1.3;
-  filter: saturate(1.05);
   background-color: #fff;
   font-weight: 300;
   box-shadow: 0 10px 15px 5px rgba(0, 0, 0, 0.05);
 }
 .container.intro {
-  min-width: 1450px;
+  min-width: 1400px;
   width: 70%;
 }
 .wrapper-search {
@@ -284,13 +289,13 @@ html:before {
   margin-right: -5px;
   vertical-align: top;
   background-color: #ddd;
+  background-image: url(../images/vertical-bg-1.png);
   background-color: rgba(0, 0, 0, 0.19);
   position: relative;
 }
 .logo img {
   width: 100%;
   height: auto;
-  opacity: .98;
 }
 .background-search {
   width: 92%;
@@ -309,7 +314,7 @@ html:before {
   margin: 0 0 10px 0;
 }
 .background-search p {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 300;
   width: 65%;
   margin: 0 0 40px 0;
@@ -324,8 +329,8 @@ html:before {
 .background-search .search-bar .info-error {
   background-color: #d61616;
   padding: 18px 25px;
-  right: -300px;
-  top: 5px;
+  left: 500px;
+  top: 2px;
   color: #fff;
   font-size: 20px;
   font-weight: 500;
@@ -334,6 +339,8 @@ html:before {
   position: absolute;
   border-radius: 6px;
   z-index: 1;
+  width: 280px;
+  text-align: center;
   transform: scale(1.3, 1.3);
 }
 .background-search .search-bar .info-error:before {
@@ -371,11 +378,15 @@ html:before {
   border: solid 6px #00b8d4;
   border-radius: 0 8px 8px 0;
   color: #fff;
+  cursor: pointer;
   margin: 0;
   letter-spacing: 2px;
   padding: 10px 50px;
   font-weight: 700;
   text-transform: uppercase;
+}
+.background-search button:hover {
+  background-color: #da3a22;
 }
 .main {
   display: flex;
@@ -388,7 +399,7 @@ html:before {
 }
 .main .back {
   position: absolute;
-  left: 570px;
+  left: 552px;
   margin-bottom: 83px;
   top: 25px;
   font-size: 15px;
@@ -432,6 +443,9 @@ html:before {
   display: inline-block;
   width: 66%;
   padding: 65px 50px 100px 50px;
+}
+.main .wrapper-info.in-similar {
+  margin-top: 30px;
 }
 .main h3 {
   font-family: 'Montserrat', sans-serif;
@@ -578,8 +592,16 @@ html:before {
 .tracks-and-video .ytPlayer button,
 .tracks-and-video .ytPlayer close-video {
   position: absolute;
-  top: 0;
-  right: 0;
+  right: 10px;
+  top: 10px;
+  width: 50px;
+  line-height: 1;
+  height: 50px;
+  border: none;
+  font-size: 35px;
+  color: #ffffff;
+  font-weight: 300;
+  background-color: #ef482f;
 }
 .tracks-and-video iframe {
   position: relative;
@@ -666,33 +688,110 @@ html:before {
   opacity: 0;
   box-shadow: 0px 0px 87px 0px rgba(0, 0, 0, 0.3);
 }
+.album-detail .modal-album-image {
+  width: 45%;
+  position: relative;
+}
+.album-detail .modal-album-image img {
+  width: 95%;
+  padding: 25px;
+  box-shadow: 0px 4px 4px rgba(173, 167, 167, 0.3);
+  background-color: #fff;
+}
+.album-detail .modal-album-image .title {
+  position: absolute;
+  top: -120px;
+  font-weight: 300;
+  font-size: 50px;
+  width: 900px;
+  left: 10px;
+}
+.album-detail .modal-album-image .title span {
+  font-size: 35px;
+  color: #ef482f;
+  display: block;
+  margin-top: 5px;
+}
+.album-detail .modal-album-image:before {
+  content: " ";
+  position: absolute;
+  width: 600px;
+  height: 60vh;
+  z-index: -1;
+  right: 50px;
+  top: -150px;
+  background-color: #ffefef;
+  transform: rotate(0deg);
+}
+.album-detail .modal-tracks-album {
+  width: 55%;
+  font-weight: 300;
+}
+.album-detail .modal-tracks-album p {
+  display: flex;
+}
+.album-detail .modal-tracks-album p span:nth-child(1) {
+  /*width: 10%;
+                    font-weight: 600;
+                    padding: 0 0 0 5px;*/
+  width: 10%;
+  padding: 0 0 0 5px;
+  display: inline-block;
+  background-color: #596768;
+  border-bottom: solid 1px #fff;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  margin-right: 10px;
+  font-size: 15px;
+}
+.album-detail .modal-tracks-album p span:nth-child(2) {
+  width: 80%;
+  padding: 10px;
+}
+.album-detail .modal-tracks-album p span:nth-child(3) {
+  width: 10%;
+  padding: 10px;
+}
+.album-detail .modal-tracks-album p:nth-child(odd) {
+  background-color: #e9ecec;
+}
 .album-detail .close {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 10px;
+  width: 50px;
+  line-height: 1;
+  height: 50px;
+  border: none;
+  font-size: 35px;
+  color: #ffffff;
+  font-weight: 300;
+  background-color: #ef482f;
 }
 .album-detail.show {
   visibility: visible;
   opacity: 1;
 }
 .modal-album-wrapper {
-  width: 800px;
+  width: 950px;
   position: absolute;
-  background-color: #a27979;
   display: flex;
   left: 50%;
   top: 50%;
-  padding: 50px;
+  padding: 0;
   transform: translateY(-50%) translateX(-50%);
+  margin-left: 50px;
 }
 /* SCROLL TO TOP ***************************/
 .back-to-top {
   display: inline-block;
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
   position: fixed;
-  bottom: 40px;
-  right: 40px;
+  bottom: 50px;
+  right: 50px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   /* image replacement properties */
   overflow: hidden;
@@ -728,7 +827,7 @@ html:before {
   position: absolute;
   left: 50%;
   top: 50%;
-  opacity: .8;
+  opacity: .7;
 }
 @keyframes spin {
   0% {

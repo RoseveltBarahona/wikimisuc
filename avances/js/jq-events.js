@@ -27,13 +27,13 @@ $(document).ready(function() {
         });
     });
 
-   /* $('main').on('click', '.similar a', function(event) {
-        event.preventDefault();
-        $('body,html').animate({
-            scrollTop: 850,
-        }, scroll_top_duration);
+    /* $('main').on('click', '.similar a', function(event) {
+         event.preventDefault();
+         $('body,html').animate({
+             scrollTop: 850,
+         }, scroll_top_duration);
 
-    });*/
+     });*/
 
     //**************************
     var offset = 300,
