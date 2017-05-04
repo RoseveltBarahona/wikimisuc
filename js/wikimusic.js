@@ -16,11 +16,6 @@
 
     // Buscar artistas
     btnSearch.addEventListener('click', function() {
-        // evitar duplicar busqueda
-        if (historyArtist[0] === artistName.value) {
-            //alert("duplicado!");
-            return;
-        }
         // verificar que el campo no este vacio
         if (artistName.value.trim().length === 0) {
             alert("escribe el nombre de un artista");
@@ -30,11 +25,6 @@
     });
 
     artistName.addEventListener('keypress', function(e) {
-         // evitar duplicar busqueda
-       if (e.keyCode === 13 && historyArtist[0] === artistName.value) {
-            //alert("duplicado!");
-            return;
-        }
         // verificar que el campo no este vacio
         if (e.keyCode === 13 && artistName.value.trim().length === 0) {
             alert("escribe el nombre de un artista");
@@ -85,15 +75,14 @@
             if (elemento.tagName.toLowerCase() === 'a') { //(event.target.tagName.toLowerCase() === 'a') // Localname tambien valdria
                 var name = elemento.title;
                 event.preventDefault();
-                showData(name);
-                // history conunter solo se modifica desde la función delegate
+                showData(name); // history conunter solo se modifica desde la función delegate
                 historyCounter++;
-                // crear boton back html
-                createButton();
+                createButton(); // crear boton back html
                 document.querySelector('.wrapper-info').classList.add('in-similar');
 
             }
         });
+
         // Crear boton volver
         function createButton() {
             var backButton = document.createElement('button');
@@ -111,9 +100,9 @@
                 historyCounter--;
                 // y vuelvo a crear el boton y vuelve a estar disponible para retrocedes un paso mas en el historico de pasos
                 createButton();
-                // si estoy en el historial numero "0" escondo el boron volver.
                 document.querySelector('.wrapper-info').classList.add('in-similar');
                 if (historyCounter === 0) {
+                    // si estoy en el historial numero "0" escondo el boron volver.
                     document.getElementById('back').classList.add('hide');
                     // la ultima vez que vuelvo atras o sea al paso cero , limpio el array 
                     historyArtist = [];
@@ -125,10 +114,6 @@
             });
         }
     }
-
-
-
-
 
     function ajaxGetInfo(metodo, funcion, name) {
         var ajax = new XMLHttpRequest();

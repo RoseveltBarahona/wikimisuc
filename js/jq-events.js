@@ -2,8 +2,8 @@
 
 $(document).ready(function() {
 
+    // NOMBRE DE ARTISTA POSITION FIXED
     $(window).scroll(function() {
-        //var sticky = $('.image-artist img'),
         var $stickyName = $('.image-artist h4'),
             $scroll = $(window).scrollTop();
 
@@ -14,8 +14,7 @@ $(document).ready(function() {
         }
     });
 
-    //**************************
-
+    // DELEGACION DE EVENTOS TPUTUBE PLAYER
     $('main').on('click', 'a.clip', function(event) {
 
         var $player = $('.ytPlayer');
@@ -31,11 +30,11 @@ $(document).ready(function() {
          event.preventDefault();
          $('body,html').animate({
              scrollTop: 850,
-         }, scroll_top_duration);
+         }, scroll_top_duration);S
 
      });*/
 
-    //**************************
+    // VOLVER ARRIBA
     var offset = 300,
         offset_opacity = 1200, //browser window scroll (in pixels) after which the "back to top" link opacity is reduced
         scroll_top_duration = 700, //duration of the top scrolling animation (in ms)

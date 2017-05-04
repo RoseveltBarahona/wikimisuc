@@ -172,6 +172,25 @@ table {
   -webkit-animation-delay: 12s;
 }
 /* Animation for the slideshow images */
+@-moz-keyframes imageAnimation {
+  0% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+  17% {
+    opacity: .6;
+    animation-timing-function: ease-out;
+  }
+  32% {
+    opacity: .6;
+  }
+  51% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 @keyframes imageAnimation {
   0% {
     opacity: 0;
@@ -247,7 +266,7 @@ body,
 }
 html {
   background-color: rgba(255, 206, 5, 0.05);
-  filter: saturate(1.06);
+  filter: saturate(1.08);
 }
 html:before {
   content: "";
@@ -367,11 +386,11 @@ html:before {
   margin: 0;
   padding: 5px 5px 5px 20px;
   margin-right: -4px;
-  font-size: 24px;
-}
-.background-search input:focus {
-  width: 320px;
-  font-size: 28px;
+  font-size: 26px;
+  /* &:focus {
+            width: 320px;
+            font-size: 28px;
+        }*/
 }
 .background-search button {
   background-color: #ef482f;
@@ -686,6 +705,7 @@ html:before {
   height: 90%;
   visibility: hidden;
   opacity: 0;
+  overflow: hidden;
   box-shadow: 0px 0px 100px 0px rgba(0, 0, 0, 0.4);
 }
 .album-detail .modal-album-image {
@@ -715,11 +735,11 @@ html:before {
 .album-detail .modal-album-image:before {
   content: " ";
   position: absolute;
-  width: 600px;
-  height: 60vh;
+  width: 135%;
+  height: 170%;
   z-index: -1;
   right: 50px;
-  top: -150px;
+  top: -40%;
   background-color: #ffefef;
   transform: rotate(0deg);
 }
@@ -835,6 +855,16 @@ html:before {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+    animation-timing-function: ease-in;
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+    animation-timing-function: ease-out;
   }
 }
 .background-loading.show {
