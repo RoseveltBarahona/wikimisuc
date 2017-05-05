@@ -1,4 +1,3 @@
-<!--
 
 /* Source: http://yvoschaap.com */
 /* Build first in '06 */
@@ -12,7 +11,7 @@ Function.prototype.bind = function(obj, args) {
         };
 
     return temp;
-}
+};
 
 var ytEmbed = {
 
