@@ -49,8 +49,8 @@
         cleanInfo();
         // peticiones 
         ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + name + '&api_key=', renderInfo, name);
-        ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=' + name + '&limit=10&api_key=', renderTracks, name);
-        ajaxGetInfo('http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=' + name + '&limit=3&api_key=', renderAlbums, name);
+        ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=' + name + '&limit=10&api_key=', renderTracks, name);
+        ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=' + name + '&limit=3&api_key=', renderAlbums, name);
         delegateSimilars();
         delegateAlbums(name);
     }
