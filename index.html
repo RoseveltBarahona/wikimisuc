@@ -24,19 +24,22 @@
             <div class="logo"><img src="images/last-fm-logo-1.gif" width="100" alt=""></div>
             <div class="background-search">
                 <h1>wikimusic</h1>
+                 <button id="back-btn" class="hide">""aaa</button>
                 <p>Información sobre tus bandas favoritas, top tracks, top albums y recomendaciones basadas en tus gustos musicales</p>
                 <div class="search-bar">
                     <div class="info-error"><span>Artistas no encontrado</span></div>
-                    <input class="nombre-artista" placeholder="Buscar artista" type="text" id="nombre-artista" autofocus />
+                    <input class="nombre-artista" placeholder="Buscar artista" type="search" id="nombre-artista" autofocus />
                     <button type="submit" id="search" value="">buscar</button>
                 </div>
             </div>
+
         </header>
         <section id="top-country"></section>
         <main id="main" class="main hidden">
             <div class="vertical-bar">vdsvs</div>
             <div id="image-artist" class="image"></div>
             <div class="wrapper-info">
+                <button id="back" class="back btn">&lt;&lt; volver</button>
                 <section id="info" class="info"></section>
                 <section id="wrapper-music-video" class="tracks-and-video">
                     <div id="music-video"></div>
@@ -45,12 +48,13 @@
                 <section id="similar-artists" class="similar-artists"></section>
             </div>
         </main>
-        <footer class="footer">Proyecto de estudiante usando la API de last fm etc... Stortor lorem sit amet ipsum. Sed ut lorem nibh. Sed enim risus, dignissim at euismod sed, imperdiet iaculis est. Ut ornare purus vel dolor lacinia bibendum.</footer>
+        <footer class="footer">Proyecto de estudiante usando la API de last fm. Agradecimientos a Ulises Gascón y Juan Andrés Nuñez de quienes he aprendido muchismimo este ultimo año. </footer>
     </div>
     <div class="album-detail"></div>
     <a href="#0" class="back-to-top">Top</a>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
     <script type="text/javascript" src="js/wikimusic.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/jq-events.js"></script>
 </body>
 

@@ -1,60 +1,131 @@
 (function() {
-    // variables globales
-    var apiKey = "e46d175d00ea667bd3d0d7d025ab81df&format=json";
-    var methodInfo = 'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=The cure&api_key=';
-    var artistName = document.getElementById('nombre-artista');
-    var btnSearch = document.getElementById('search');
-    var mainInfo = document.getElementById('main');
-    var container = document.querySelector('.container');
-    var historyArtist = [];
-    var historyCounter = 0;
-    var videoSearch;
-    var indexOfArtist;
-    var infoError = document.querySelector('.info-error');
-    var loading = document.querySelector('.background-loading');
 
+    var apiKey = "&api_key=e46d175d00ea667bd3d0d7d025ab81df&format=json",
+        urlBase = 'https://ws.audioscrobbler.com/2.0/?method=',
+        artistName = document.getElementById('nombre-artista'),
+        btnSearch = document.getElementById('search'),
+        mainInfo = document.getElementById('main'),
+        container = document.querySelector('.container'),
+        infoError = document.querySelector('.info-error'),
+        loading = document.querySelector('.background-loading'),
+        historyCounter = 0,
+        session = false,
+        currentArtist,
+        videoSearch,
+        getNameFromUrl,
+        artistInUrl;
 
-    // Buscar artistas
+    window.onload = function() {
+        verifyUrl();
+    };
+
+    // Buscar artista
     btnSearch.addEventListener('click', function() {
-        // verificar que el campo no este vacio
-        if (artistName.value.trim().length === 0) {
-            alert("escribe el nombre de un artista");
-        } else {
+        // evitar duplicar busqueda
+        /* if (historyArtist[0] === artistName.value) {
+             //alert("duplicado!");
+             return;
+         }*/
+
+        if (artistName.value.trim().length !== 0) {
             sendName();
         }
     });
 
     artistName.addEventListener('keypress', function(e) {
-        // verificar que el campo no este vacio
-        if (e.keyCode === 13 && artistName.value.trim().length === 0) {
-            alert("escribe el nombre de un artista");
-        } else if (e.keyCode === 13 && artistName.value.trim().length > 0) {
+        /* if (e.keyCode === 13 && historyArtist[0] === artistName.value) {
+             alert("duplicado!");
+             return;
+         }*/
+        if (e.keyCode === 13 && artistName.value.trim().length !== 0) {
             sendName();
         }
     });
 
+    // verificar si en la url hay busqueda
+    function verifyUrl() {
+        artistInUrl = window.location.search;
+        if (artistInUrl !== "") {
+            // resultado del nombre del artista
+            getNameFromUrl = getQueryVariable('artist');
+            if (getNameFromUrl !== false) {
+                composeRequest(getNameFromUrl);
+            }
+        }
+    }
+
+    /*  Obtener artista desde la URL:
+        eliminar simbolo --> ? 
+        Convertir cadena a array
+        Iterar y dividir el array con el simbolo "="  --> [0]=artist , [1]=Nombre del artista
+        Retornar nombre del artista o false.  */
+
+    function getQueryVariable(variable) {
+        var query = artistInUrl.substring(1);
+        var vars = query.split();
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return (false);
+    }
+
+    // Evento "onpopstate" solo se dispara cuando doy atras o adelante en el historial del navegador.
+    window.onpopstate = function(e) {
+        if (window.location.search === "") {
+            cleanHtml();
+            mainInfo.classList.add('hidden');
+        }
+        verifyUrl();
+    };
+
+    // Añadir al historial
+    function pushState(name) {
+        history.pushState({}, " ", '?artist=' + name);
+    }
+
+    function updateInput() {
+        artistInUrl = window.location.search;
+        artistName.value = getQueryVariable('artist');
+        artistName.value = artistName.value.split("%20");
+        artistName.value = artistName.value.replace(",", " ");
+
+    }
+
     function sendName() {
         var name = artistName.value;
-        historyArtist = [];
-        historyCounter = 0;
-        showData(name);
+        pushState(name);
+        composeRequest(name);
     }
 
-    // Mostrar datos 
-    function showData(name) {
+    // Componer peticiones y limpiar el html
+    function composeRequest(name) {
         videoSearch = true;
-        // cada vez que show data es invocada guarda los nombres de los artistas
-        historyArtist.push(name);
-        // limpiar html
-        cleanInfo();
+        cleanHtml();
         // peticiones 
-        ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + name + '&api_key=', renderInfo, name);
-        ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=' + name + '&limit=10&api_key=', renderTracks, name);
-        ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=' + name + '&limit=3&api_key=', renderAlbums, name);
+        ajaxGetInfo(urlBase + 'artist.getinfo&artist=' + name + apiKey, renderInfo, name);
+        ajaxGetInfo(urlBase + 'artist.gettoptracks&artist=' + name + '&limit=10' + apiKey, renderTracks, name);
+        ajaxGetInfo(urlBase + 'artist.gettopalbums&artist=' + name + '&limit=3' + apiKey, renderAlbums, name);
+        //
         delegateSimilars();
         delegateAlbums(name);
+        showBackButton();
     }
 
+    // Delegación de eventos boton back
+    function delegateBackButton() {
+        mainInfo.addEventListener('click', function(event) {
+            var elemento = event.target;
+            if (elemento.id === "back") {
+                history.back();
+            }
+        });
+    }
+    delegateBackButton();
+
+    // Delegación de eventos albumes
     function delegateAlbums(name) {
         var albums = document.getElementById('top-albums');
         albums.addEventListener('click', function(event) {
@@ -62,128 +133,128 @@
             if (elemento.tagName.toLowerCase() === 'a') {
                 event.preventDefault();
                 var AlbumName = elemento.id;
-                ajaxGetInfo('https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=' + name + '&album=' + AlbumName + '&api_key=', renderAlbumDetails);
+                ajaxGetInfo(urlBase + 'album.getinfo&artist=' + name + '&album=' + AlbumName + apiKey, renderAlbumDetails);
             }
         });
     }
 
+    // Delegación de eventos artistas similares
     function delegateSimilars() {
-        // Delegación de eventos
         var contentSimilar = document.getElementById('similar-artists');
         contentSimilar.addEventListener('click', function(event) {
             var elemento = event.target;
-            if (elemento.tagName.toLowerCase() === 'a') { //(event.target.tagName.toLowerCase() === 'a') // Localname tambien valdria
+            if (elemento.tagName.toLowerCase() === 'a') {
                 var name = elemento.title;
                 event.preventDefault();
-                showData(name); // history conunter solo se modifica desde la función delegate
-                historyCounter++;
-                createButton(); // crear boton back html
-                document.querySelector('.wrapper-info').classList.add('in-similar');
-
+                pushState(name);
+                composeRequest(name);
             }
         });
+    }
 
-        // Crear boton volver
-        function createButton() {
-            var backButton = document.createElement('button');
-            backButton.textContent = "<< volver";
-            backButton.setAttribute('id', 'back');
-            backButton.setAttribute('class', 'back btn');
-            var fatherToInsert = document.getElementById('main');
-            var childReference = document.getElementById('image-artist');
-            fatherToInsert.insertBefore(backButton, childReference);
-
-            backButton.addEventListener('click', function() {
-                // Al darle click al boton "volver" , pido la informacion del artista anterior guardada en el array "historyArtist"
-                showData(historyArtist[historyCounter - 1]);
-                // luego de pedir la informacion resto un numero a "history counter" ya ques ahora estoy en un paso anterior.
-                historyCounter--;
-                // y vuelvo a crear el boton y vuelve a estar disponible para retrocedes un paso mas en el historico de pasos
-                createButton();
-                document.querySelector('.wrapper-info').classList.add('in-similar');
-                if (historyCounter === 0) {
-                    // si estoy en el historial numero "0" escondo el boron volver.
-                    document.getElementById('back').classList.add('hide');
-                    // la ultima vez que vuelvo atras o sea al paso cero , limpio el array 
-                    historyArtist = [];
-                    // guardo el primer artista buscado y lo pongo como inicio del index "historyArtist"
-                    indexOfArtist = document.getElementById('nombre-artista').value;
-                    historyArtist.push(indexOfArtist);
-                    document.querySelector('.wrapper-info').classList.remove('in-similar');
-                }
-            });
+    function showBackButton() {
+        backButton = document.getElementById('back');
+        if (!history.state) {
+            backButton.classList.add('hide');
+        } else {
+            backButton.classList.remove('hide');
         }
     }
 
-    function ajaxGetInfo(metodo, funcion, name) {
-        var ajax = new XMLHttpRequest();
-        loading.classList.add('show');
-        artistName.disabled = true;
-        btnSearch.disabled = true;
-        btnSearch.textContent = 'BUSCANDO.........';
 
+    function ajaxGetInfo(url, callback, name) {
+        startSearch();
+        var ajax = new XMLHttpRequest();
         ajax.onreadystatechange = function() {
             if (ajax.readyState === 4 && ajax.status === 200) {
                 var datos = JSON.parse(ajax.responseText);
-                // Erros JSON
+
+                // Artista no encontrado
                 if (datos.error >= 0) {
                     mainInfo.classList.add('hidden');
                     infoError.classList.add('show');
-                } else {
+                    updateInput();
+
+                    // si es la primera visita y da error, osea si viene desde un enlace erroneo:
+                    if (!session && artistInUrl !== "") {
+                        alert("url no valida");
+                        session = true;
+                    }
+                }
+
+                // Artista Encontrado
+                else {
                     for (var i in datos) {
-                        funcion(datos[i]); //mandar datos a las funciones para renderizar
+                        //mandar datos a las funciones para renderizar
+                        callback(datos[i]);
                     }
                     if (videoSearch) {
-                        //get video plugin --> busca un video basado en el nombre del artista
-                        ytEmbed.init({
-                            'block': 'music-video',
-                            'key': 'AIzaSyA8OmKcw2DMNkJicyCJ0vqvf90xgeH52zE', //AIzaSyCCxfoBKXBxrVe4axTZ6tiPukVQ5EC7j80
-                            'q': name,
-                            'type': 'search',
-                            'results': 1,
-                            'player': 'embed',
-                            'thumbnails': true,
-                            'layout': 'full',
-                            'width': '800',
-                            'height': '488'
-                        });
-                        videoSearch = false;
+                        searchVideo(name);
                     }
-                    if (funcion !== renderAlbumDetails) {
+                    if (callback !== renderAlbumDetails) {
                         window.scrollTo(0, 920);
                     }
-                    container.classList.remove('intro');
                     mainInfo.classList.remove('hidden');
                 }
-                //extras
-                btnSearch.disabled = false;
-                artistName.disabled = false;
-                btnSearch.textContent = 'buscar';
-                setTimeout(function() {
-                    loading.classList.remove('show');
-                }, 500);
+                // si provengo desde artista similar no hacer updateinput drod
+                updateInput();
+                endSearch();
 
-            } else if (ajax.readyState === 4 && ajax.status === 404) { //ERROR 404
+                //ERROR 404
+            } else if (ajax.readyState === 4 && ajax.status === 404) {
                 var errorInfo = JSON.parse(ajax.responseText);
-                console.error("ERROR! 404");
-                alert("error, recurso no encontrado ");
+                alert("Error, recurso no encontrado ");
             }
         };
-        ajax.open("GET", metodo + apiKey, true);
+
+        ajax.open("GET", url, true);
         ajax.send();
     }
 
+    function startSearch() {
+        loading.classList.add('show');
+        artistName.disabled = true;
+        btnSearch.disabled = true;
+        btnSearch.textContent = 'BUSCANDO....';
+    }
 
+    function endSearch() {
+        btnSearch.disabled = false;
+        artistName.disabled = false;
+        btnSearch.textContent = 'buscar';
+        setTimeout(function() {
+            loading.classList.remove('show');
+        }, 500);
+    }
+
+    //video plugin --> video basado en el nombre del artista
+    function searchVideo(name) {
+        ytEmbed.init({
+            'block': 'music-video',
+            'key': 'AIzaSyA8OmKcw2DMNkJicyCJ0vqvf90xgeH52zE',
+            'q': name,
+            'type': 'search',
+            'results': 1,
+            'player': 'embed',
+            'thumbnails': true,
+            'width': '800',
+            'height': '488'
+        });
+        videoSearch = false;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // RENDER DATOS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RENDER DATOS --> PASAR A HANDLEBARS
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Vaciar el contenido de los divs antes de traer los nuevos datos
-    function cleanInfo() {
+    function cleanHtml() {
         var contenido = '<div class="vertical-bar"></div>';
         contenido += ' <div id="image-artist" class="image"></div>';
         contenido += '<div class="wrapper-info">';
-        contenido += '<section id="info" class="info"></section>';
+        contenido += '<section id="info" class="info"><button id="back" class="back btn">&lt;&lt; volver</button></section>';
         contenido += '<section id="wrapper-music-video" class="tracks-and-video"><div id="tracks"></div><div id="music-video"></div> </section>';
         contenido += '<section id="top-albums" class="top-albums"></section>';
         contenido += '<section id="similar-artists" class="similar-artists"></section>';
@@ -279,4 +350,6 @@
         document.getElementById('top-albums').innerHTML += topAlbums;
 
     }
+    //
+
 })();
