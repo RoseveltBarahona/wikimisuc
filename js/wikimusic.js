@@ -8,39 +8,44 @@
         container = document.querySelector('.container'),
         infoError = document.querySelector('.info-error'),
         loading = document.querySelector('.background-loading'),
-        historyCounter = 0,
         session = false,
+        newValue = "",
         currentArtist,
-        videoSearch,
         getNameFromUrl,
-        artistInUrl;
-
-    window.onload = function() {
-        verifyUrl();
-    };
+        onlyOnce,
+        artistInUrl,
+        replaceComma,
+        arrayName;
 
     // Buscar artista
     btnSearch.addEventListener('click', function() {
-        // evitar duplicar busqueda
-        /* if (historyArtist[0] === artistName.value) {
-             //alert("duplicado!");
-             return;
-         }*/
-
+        if (currentArtist === artistName.value) {
+            return;
+        }
         if (artistName.value.trim().length !== 0) {
             sendName();
         }
     });
 
     artistName.addEventListener('keypress', function(e) {
-        /* if (e.keyCode === 13 && historyArtist[0] === artistName.value) {
-             alert("duplicado!");
-             return;
-         }*/
+        if (e.keyCode === 13 && currentArtist === artistName.value) {
+            return;
+        }
         if (e.keyCode === 13 && artistName.value.trim().length !== 0) {
             sendName();
         }
     });
+
+    function sendName() {
+        var name = artistName.value;
+        pushState(name);
+        composeRequest(name);
+    }
+
+    // Al cargar la pagina
+    window.onload = function() {
+        verifyUrl();
+    };
 
     // verificar si en la url hay busqueda
     function verifyUrl() {
@@ -56,10 +61,9 @@
 
     /*  Obtener artista desde la URL:
         eliminar simbolo --> ? 
-        Convertir cadena a array
+        Convertir cadena a array --> var vars = query.split() --> devuelve un array de un solo item
         Iterar y dividir el array con el simbolo "="  --> [0]=artist , [1]=Nombre del artista
-        Retornar nombre del artista o false.  */
-
+        Retornar nombre del artista o false. */
     function getQueryVariable(variable) {
         var query = artistInUrl.substring(1);
         var vars = query.split();
@@ -77,6 +81,8 @@
         if (window.location.search === "") {
             cleanHtml();
             mainInfo.classList.add('hidden');
+            artistName.value = "";
+            artistName.placeholder = "Buscar artista";
         }
         verifyUrl();
     };
@@ -86,35 +92,38 @@
         history.pushState({}, " ", '?artist=' + name);
     }
 
+    // Actualizar el value del input
     function updateInput() {
         artistInUrl = window.location.search;
         artistName.value = getQueryVariable('artist');
-        artistName.value = artistName.value.split("%20");
-        artistName.value = artistName.value.replace(",", " ");
+        arrayName = artistName.value.split("%20");
+        artistName.value = arrayName;
+        replaceComma = artistName.value.split("");
+        for (var i = 0; i < replaceComma.length; i++) {
+            if (replaceComma[i] === ",") {
+                replaceComma[i] = " ";
+            }
+            newValue += replaceComma[i];
+        }
+        artistName.value = newValue;
 
-    }
-
-    function sendName() {
-        var name = artistName.value;
-        pushState(name);
-        composeRequest(name);
     }
 
     // Componer peticiones y limpiar el html
     function composeRequest(name) {
-        videoSearch = true;
+        onlyOnce = true;
         cleanHtml();
         // peticiones 
         ajaxGetInfo(urlBase + 'artist.getinfo&artist=' + name + apiKey, renderInfo, name);
         ajaxGetInfo(urlBase + 'artist.gettoptracks&artist=' + name + '&limit=10' + apiKey, renderTracks, name);
         ajaxGetInfo(urlBase + 'artist.gettopalbums&artist=' + name + '&limit=3' + apiKey, renderAlbums, name);
-        //
+
         delegateSimilars();
         delegateAlbums(name);
         showBackButton();
     }
 
-    // Delegación de eventos boton back
+    // Delegación de eventos 
     function delegateBackButton() {
         mainInfo.addEventListener('click', function(event) {
             var elemento = event.target;
@@ -125,7 +134,6 @@
     }
     delegateBackButton();
 
-    // Delegación de eventos albumes
     function delegateAlbums(name) {
         var albums = document.getElementById('top-albums');
         albums.addEventListener('click', function(event) {
@@ -138,7 +146,6 @@
         });
     }
 
-    // Delegación de eventos artistas similares
     function delegateSimilars() {
         var contentSimilar = document.getElementById('similar-artists');
         contentSimilar.addEventListener('click', function(event) {
@@ -148,10 +155,12 @@
                 event.preventDefault();
                 pushState(name);
                 composeRequest(name);
+                fromSimilar = true;
             }
         });
     }
 
+    // Mostrar/ocultar boton back
     function showBackButton() {
         backButton = document.getElementById('back');
         if (!history.state) {
@@ -160,57 +169,8 @@
             backButton.classList.remove('hide');
         }
     }
-
-
-    function ajaxGetInfo(url, callback, name) {
-        startSearch();
-        var ajax = new XMLHttpRequest();
-        ajax.onreadystatechange = function() {
-            if (ajax.readyState === 4 && ajax.status === 200) {
-                var datos = JSON.parse(ajax.responseText);
-
-                // Artista no encontrado
-                if (datos.error >= 0) {
-                    mainInfo.classList.add('hidden');
-                    infoError.classList.add('show');
-                    updateInput();
-
-                    // si es la primera visita y da error, osea si viene desde un enlace erroneo:
-                    if (!session && artistInUrl !== "") {
-                        alert("url no valida");
-                        session = true;
-                    }
-                }
-
-                // Artista Encontrado
-                else {
-                    for (var i in datos) {
-                        //mandar datos a las funciones para renderizar
-                        callback(datos[i]);
-                    }
-                    if (videoSearch) {
-                        searchVideo(name);
-                    }
-                    if (callback !== renderAlbumDetails) {
-                        window.scrollTo(0, 920);
-                    }
-                    mainInfo.classList.remove('hidden');
-                }
-                // si provengo desde artista similar no hacer updateinput drod
-                updateInput();
-                endSearch();
-
-                //ERROR 404
-            } else if (ajax.readyState === 4 && ajax.status === 404) {
-                var errorInfo = JSON.parse(ajax.responseText);
-                alert("Error, recurso no encontrado ");
-            }
-        };
-
-        ajax.open("GET", url, true);
-        ajax.send();
-    }
-
+    
+    // Iniciando busqueda
     function startSearch() {
         loading.classList.add('show');
         artistName.disabled = true;
@@ -218,6 +178,7 @@
         btnSearch.textContent = 'BUSCANDO....';
     }
 
+    // finalizando busqueda
     function endSearch() {
         btnSearch.disabled = false;
         artistName.disabled = false;
@@ -240,12 +201,80 @@
             'width': '800',
             'height': '488'
         });
-        videoSearch = false;
     }
+
+    function ajaxGetInfo(url, callback, name) {
+        startSearch();
+        var ajax = new XMLHttpRequest();
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState === 4 && ajax.status === 200) {
+                var datos = JSON.parse(ajax.responseText);
+
+                // Artista no encontrado
+                if (datos.error >= 0) {
+                    if (onlyOnce) {
+                        mainInfo.classList.add('hidden');
+                        infoError.classList.add('show');
+                        updateInput();
+                        onlyOnce = false;
+                    }
+
+                    // si es la primera visita y da error, osea si viene desde un enlace erroneo:
+                    if (!session && artistInUrl !== "") {
+                        alert("url no valida");
+                        session = true;
+                    }
+                }
+
+                // Artista Encontrado
+                else {
+                    //mandar datos a las funciones para renderizar
+                    for (var i in datos) {
+                        callback(datos[i]);
+                    }
+                    if (callback !== renderAlbumDetails) {
+                        window.scrollTo(0, 920);
+                    }
+                    // cosas de una sola ejecucion
+                    if (onlyOnce) {
+                        searchVideo(name);
+                        mainInfo.classList.remove('hidden');
+                        onlyOnce = false;
+                    }
+                }
+
+                endSearch();
+                // guardar el nombre del artista actual
+                currentArtist = artistName.value;
+
+                //ERROR 404
+            } else if (ajax.readyState === 4 && ajax.status === 404) {
+                var errorInfo = JSON.parse(ajax.responseText);
+                alert("Error, recurso no encontrado ");
+            }
+        };
+
+        ajax.open("GET", url, true);
+        ajax.send();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // RENDER DATOS --> PASAR A HANDLEBARS
+    // RENDER DATOS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -350,6 +379,4 @@
         document.getElementById('top-albums').innerHTML += topAlbums;
 
     }
-    //
-
 })();
