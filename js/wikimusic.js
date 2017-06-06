@@ -223,7 +223,7 @@
 
                     // si es la primera visita y da error, osea si viene desde un enlace erroneo:
                     if (!sessionStorage.noFirstVisit && artistInUrl !== "") {
-                        alert(" Primeravista\n URL no valida");
+                        alert(" Primera visita\n URL no valida");
                         sessionStorage.noFirstVisit = "1";
                     }
                 }
