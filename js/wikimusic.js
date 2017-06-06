@@ -8,14 +8,14 @@
         container = document.querySelector('.container'),
         infoError = document.querySelector('.info-error'),
         loading = document.querySelector('.background-loading'),
-        session = false,
-        newValue = "",
+        newValue,
         currentArtist,
         getNameFromUrl,
         onlyOnce,
         artistInUrl,
         replaceComma,
         arrayName;
+
 
     // Buscar artista
     btnSearch.addEventListener('click', function() {
@@ -99,14 +99,16 @@
         arrayName = artistName.value.split("%20");
         artistName.value = arrayName;
         replaceComma = artistName.value.split("");
+        newValue = "";
         for (var i = 0; i < replaceComma.length; i++) {
             if (replaceComma[i] === ",") {
                 replaceComma[i] = " ";
             }
+
             newValue += replaceComma[i];
         }
-        artistName.value = newValue;
 
+        artistName.value = newValue;
     }
 
     // Componer peticiones y limpiar el html
@@ -169,7 +171,7 @@
             backButton.classList.remove('hide');
         }
     }
-    
+
     // Iniciando busqueda
     function startSearch() {
         loading.classList.add('show');
@@ -220,9 +222,9 @@
                     }
 
                     // si es la primera visita y da error, osea si viene desde un enlace erroneo:
-                    if (!session && artistInUrl !== "") {
-                        alert("url no valida");
-                        session = true;
+                    if (!sessionStorage.noFirstVisit && artistInUrl !== "") {
+                        alert(" Primeravista\n URL no valida");
+                        sessionStorage.noFirstVisit = "1";
                     }
                 }
 
@@ -241,6 +243,7 @@
                         mainInfo.classList.remove('hidden');
                         onlyOnce = false;
                     }
+                    sessionStorage.noFirstVisit = "1";
                 }
 
                 endSearch();
